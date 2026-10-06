@@ -1,3 +1,7 @@
+:root{
+-color-accent:oklch(93% 0.04 315);
+accent-color: var(--color-accent);
+}
 body {
   /* Set line height to 1.5 times the font size
      and use the OS's UI font as the website font
@@ -19,7 +23,13 @@ nav a{
 }
 
 nav a.current{
-border-bottom:.4em solid oklch(67.995% 0.10978 194.921);
+border-bottom:.4em solid oklch(58.386% 0.08545 314.069 / 0.988);
 padding-bottom: .1em;
+
+}
+nav a:hover{
+ border-bottom: .4em solid var(--color-accent);
+ padding-bottom: .1em;
+ background-color: oklch(from var(--color-accent)93% 0.04 315)
 
 }
