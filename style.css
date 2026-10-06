@@ -1,5 +1,5 @@
 :root{
--color-accent:oklch(93% 0.04 315);
+--color-accent:oklch(27.438% 0.13866 310.226 / 0.772);
 accent-color: var(--color-accent);
 }
 body {
@@ -13,6 +13,8 @@ body {
 }
 nav{
   display: flex;
+  margin-bottom: 1em;
+  border-bottom: 1px solid okluch(80% 3% 200);
 }
 nav a{
   flex: 1;
@@ -30,6 +32,6 @@ padding-bottom: .1em;
 nav a:hover{
  border-bottom: .4em solid var(--color-accent);
  padding-bottom: .1em;
- background-color: oklch(from var(--color-accent)93% 0.04 315)
+ background-color: oklch(from var(--color-accent) 93% 0.04 315);
 
 }
