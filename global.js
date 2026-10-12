@@ -59,6 +59,18 @@ document.body.insertAdjacentHTML(
 );
 //get a reference to the dropdown menu
 let select = document.querySelector('.color-scheme select');
+
+// If a saved color scheme exists, use it
+if ('colorScheme' in localStorage) {
+  document.documentElement.style.setProperty(
+    'color-scheme',
+    localStorage.colorScheme
+  );
+
+  // Update the dropdown so it matches the saved value
+  select.value = localStorage.colorScheme;
+}
+
 //changes to the dropdown menu
 select.addEventListener('input', function (event) {
   console.log('color scheme changed to', event.target.value);
@@ -68,4 +80,7 @@ select.addEventListener('input', function (event) {
     'color-scheme',
     event.target.value
   );
+ // Save user's theme preference
+  localStorage.colorScheme = event.target.value;
+
 });
