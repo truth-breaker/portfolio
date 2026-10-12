@@ -18,13 +18,14 @@ const BASE_PATH =
   location.hostname === 'localhost' || location.hostname === '127.0.0.1'
     ? '/' // Local server
     : '/portfolio/'; // GitHub Pages repo name
+// Create a <nav> element and place it at the top of the page   
 let nav = document.createElement('nav');
 document.body.prepend(nav);
-
+//loop thru each page and create a navigation link
 for (let p of pages) {
   let url = p.url;
   let title = p.title;
-
+//add the github pages base path to internal links
   url = !url.startsWith('http') ? BASE_PATH + url : url;
 
   // Create link and add it to nav
@@ -41,6 +42,30 @@ for (let p of pages) {
   }
 }
 
+// Step 4.2: color scheme switch
+document.body.insertAdjacentHTML(
+  'afterbegin',
+  `
 
-  
+    <label class="color-scheme">
+      Theme:
+      <select>
+        <option value="light dark">Automatic</option>
+        <option value="light">Light</option>
+        <option value="dark">Dark</option>
+      </select>
+    </label>`,
 
+);
+//get a reference to the dropdown menu
+let select = document.querySelector('.color-scheme select');
+//changes to the dropdown menu
+select.addEventListener('input', function (event) {
+  console.log('color scheme changed to', event.target.value);
+//Update the CSS color-scheme property on the root element
+//so the browser switches btwn light and dark mode
+  document.documentElement.style.setProperty(
+    'color-scheme',
+    event.target.value
+  );
+});
