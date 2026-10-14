@@ -121,6 +121,13 @@ export async function fetchJSON(url) {
     console.error('Error fetching or parsing JSON data:', error);
   }
 }
+// Fetch GitHub profile data for a specific username
+export async function fetchGithubData(username) {
+    // Use fetchJSON to request the user's data from the GitHub API
+    return fetchJSON(`https://api.github.com/users/${username}`);
+}
+
+
 
 export function renderProjects(project, containerElement, headingLevel = 'h2') {
     containerElement.innerHTML = '';
