@@ -126,3 +126,24 @@ section article header p {
 section article ul {
   margin-block: 0.5em 0;
 }
+
+/* Style the GitHub stats as four equal columns */
+#profile-stats dl {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+}
+
+/* Place each GitHub stat label in the first row */
+#profile-stats dt {
+    grid-row: 1;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    color: gray;
+}
+
+/* Place each GitHub stat value in the second row */
+#profile-stats dd {
+    grid-row: 2;
+    margin: 0;
+    font-size: 2rem;
+}
