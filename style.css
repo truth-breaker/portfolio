@@ -194,3 +194,14 @@ section article ul {
     align-items: center;
     gap: 2em;
 }
+.selected {
+    --color: oklch(60% 45% 0) !important;
+
+    &:is(path) {
+        fill: var(--color);
+    }
+}
+path {
+    transition: 300ms;
+    cursor: pointer;
+}
