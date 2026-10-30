@@ -155,6 +155,16 @@ section article ul {
     max-width: 20em;
     margin-block: 2em;
     overflow: visible;
+
+    &:has(path:hover) {
+      path:not(:hover) {
+        opacity: 0.5;
+      }
+    }
+
+    path {
+        transition: 300ms;
+    }
 }
 
 .swatch {

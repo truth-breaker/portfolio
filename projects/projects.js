@@ -11,33 +11,80 @@ renderProjects(projects, projectsContainer, 'h2');
 const projectsTitle = document.querySelector('.projects-title');
 //update the title with the total #of projects
 projectsTitle.textContent = `${projects.length} Projects`;
-let arcGenerator = d3.arc().innerRadius(0).outerRadius(50);
+//search var
+let query = '';
+let searchInput = document.querySelector('.searchBar');
 
-let rolledData = d3.rollups(
-    projects,
-    (v) => v.length,
-    (d) => d.year,
-);
+function renderPieChart(projectsGiven) {
+    // Group the projects by year and count the projects in each year
+    let newRolledData = d3.rollups(
+        projectsGiven,
+        (v) => v.length,
+        (d) => d.year,
+    );
 
-let data = rolledData.map(([year, count]) => {
-    return { value: count, label: year };
-});
+    // Convert the grouped data into the format needed by the pie chart
+    let newData = newRolledData.map(([year, count]) => {
+        return { value: count, label: year };
+    });
 
-let sliceGenerator = d3.pie().value((d) => d.value);
-let arcData = sliceGenerator(data);
+    // Create the pie-slice information
+    let newSliceGenerator = d3.pie().value((d) => d.value);
+    let newArcData = newSliceGenerator(newData);
 
-let arcs = arcData.map((d) => arcGenerator(d));
+    // Create the SVG paths for the pie slices
+    let newArcGenerator = d3.arc().innerRadius(0).outerRadius(50);
+    let newArcs = newArcData.map((d) => newArcGenerator(d));
 
-let colors = d3.scaleOrdinal(d3.schemeTableau10);
+    // Create the color scale
+    let colors = d3.scaleOrdinal(d3.schemeTableau10);
 
-arcs.forEach((arc, idx) => {
-    d3.select('svg').append('path').attr('d', arc).attr('fill', colors(idx));
-});
-let legend = d3.select('.legend');
-data.forEach((d, idx) => {
-    legend
-        .append('li')
-        .attr('style', `--color:${colors(idx)}`)
-        .attr('class', 'legend-item')
-        .html(`<span class="swatch"></span> ${d.label} <em>(${d.value})</em>`);
+    // Select the specific project SVG and remove old paths
+    let newSVG = d3.select('#projects-pie-plot');
+    newSVG.selectAll('path').remove();
+
+    // Select the legend and remove old legend items
+    let newLegend = d3.select('.legend');
+    newLegend.selectAll('li').remove();
+
+    // Draw the new pie slices
+    newArcs.forEach((arc, idx) => {
+        newSVG
+            .append('path')
+            .attr('d', arc)
+            .attr('fill', colors(idx));
+    });
+
+    // Draw the new legend
+    newData.forEach((d, idx) => {
+        newLegend
+            .append('li')
+            .attr('style', `--color:${colors(idx)}`)
+            .attr('class', 'legend-item')
+            .html(
+                `<span class="swatch"></span> ${d.label} <em>(${d.value})</em>`,
+            );
+    });
+}
+
+// Display the complete pie chart when the page first loads
+renderPieChart(projects);
+
+// Update the projects, chart, and legend after a search
+searchInput.addEventListener('change', (event) => {
+    // Update the query value
+    query = event.target.value;
+
+    // Search across all project information
+    let filteredProjects = projects.filter((project) => {
+        let values = Object.values(project).join('\n').toLowerCase();
+
+        return values.includes(query.toLowerCase());
+    });
+
+    // Display only the matching projects
+    renderProjects(filteredProjects, projectsContainer, 'h2');
+
+    // Update the pie chart and legend using the matching projects
+    renderPieChart(filteredProjects);
 });
