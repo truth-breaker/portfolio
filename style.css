@@ -205,3 +205,22 @@ path {
     transition: 300ms;
     cursor: pointer;
 }
+
+.stats {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 1em;
+}
+
+.stats dt {
+    grid-row: 1;
+    font-size: 0.75em;
+    text-transform: uppercase;
+    color: #888;
+}
+
+.stats dd {
+    grid-row: 2;
+    margin: 0;
+    font-size: 2em;
+}
