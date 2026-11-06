@@ -177,14 +177,21 @@ function renderScatterPlot(data, commits) {
         .append('g')
         .attr('class', 'dots');
 
-   
+    // Find the minimum and maximum number of lines edited
+    const [minLines, maxLines] = d3.extent(commits, (d) => d.totalLines);
+   // Create a scale for the dot radius
+    const rScale = d3
+        .scaleLinear()
+        .domain([minLines, maxLines])
+        .range([2, 30]);
     dots
         .selectAll('circle')
         .data(commits)
         .join('circle')
         .attr('cx', (d) => xScale(d.datetime))
         .attr('cy', (d) => yScale(d.hourFrac))
-        .attr('r', 5)
+        .attr('r', (d) => rScale(d.totalLines))
+        .style('fill-opacity', 0.7)
         .attr('fill', 'steelblue')
         
         .on('mouseenter', (event, commit) => {
