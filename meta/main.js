@@ -184,9 +184,14 @@ function renderScatterPlot(data, commits) {
         .scaleSqrt()
         .domain([minLines, maxLines])
         .range([2, 30]);
+    // Sort commits by total lines in descending order
+    const sortedCommits = d3.sort(
+        commits,
+        (d) => -d.totalLines
+    );
     dots
         .selectAll('circle')
-        .data(commits)
+        .data(sortedCommits)
         .join('circle')
         .attr('cx', (d) => xScale(d.datetime))
         .attr('cy', (d) => yScale(d.hourFrac))
