@@ -181,7 +181,7 @@ function renderScatterPlot(data, commits) {
     const [minLines, maxLines] = d3.extent(commits, (d) => d.totalLines);
    // Create a scale for the dot radius
     const rScale = d3
-        .scaleLinear()
+        .scaleSqrt()
         .domain([minLines, maxLines])
         .range([2, 30]);
     dots
@@ -191,8 +191,9 @@ function renderScatterPlot(data, commits) {
         .attr('cx', (d) => xScale(d.datetime))
         .attr('cy', (d) => yScale(d.hourFrac))
         .attr('r', (d) => rScale(d.totalLines))
-        .style('fill-opacity', 0.7)
         .attr('fill', 'steelblue')
+        .style('fill-opacity', 0.7)
+        
         
         .on('mouseenter', (event, commit) => {
         renderTooltipContent(commit);
