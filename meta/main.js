@@ -142,6 +142,20 @@ function renderScatterPlot(data, commits) {
     xScale.range([usableArea.left, usableArea.right]);
 
     yScale.range([usableArea.bottom, usableArea.top]);
+    // Add gridlines BEFORE the axes
+    const gridlines = svg
+        .append('g')
+        .attr('class', 'gridlines')
+        .attr('transform', `translate(${usableArea.left}, 0)`);
+
+    // Create gridlines as an axis with no labels and full-width ticks
+    gridlines.call(
+        d3
+            .axisLeft(yScale)
+            .tickFormat('')
+            .tickSize(-usableArea.width)
+    );
+
     //create the axes 
 
     const xAxis = d3.axisBottom(xScale);
@@ -158,7 +172,7 @@ function renderScatterPlot(data, commits) {
         .append('g')
         .attr('transform', `translate(${usableArea.left}, 0)`)
         .call(yAxis);
-        
+
     const dots = svg
         .append('g')
         .attr('class', 'dots');
