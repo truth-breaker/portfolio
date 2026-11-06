@@ -291,3 +291,27 @@ circle:hover {
 circle.selected {
     fill: #ff6b6b;
 }
+#language-breakdown {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(8em, 1fr));
+    gap: 2em;
+    max-width: 40em;
+    margin-top: 1em;
+}
+
+#language-breakdown dt {
+    grid-row: 1;
+    font-size: 1.1em;
+    font-weight: normal;
+    color: black;
+    text-transform: none;
+}
+
+#language-breakdown dd {
+    grid-row: 2;
+    margin: 0;
+    font-family: monospace;
+    font-size: 1.5em;
+    line-height: 1.4;
+    white-space: pre-line;
+}
