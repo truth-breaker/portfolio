@@ -108,6 +108,8 @@ function renderCommitInfo(data, commits) {
     dl.append('dt').text('Most active time');
     dl.append('dd').text(formattedPeriod);
 }
+let xScale;
+let yScale;
 function renderScatterPlot(data, commits) {
     const width = 1000;
     const height = 600;
@@ -128,13 +130,13 @@ function renderScatterPlot(data, commits) {
         .attr('viewBox', `0 0 ${width} ${height}`)
         .style('overflow', 'visible');
 
-    const xScale = d3
+    xScale = d3
         .scaleTime()
         .domain(d3.extent(commits, (d) => d.datetime))
         .range([0, width])
         .nice();
 
-    const yScale = d3
+    yScale = d3
         .scaleLinear()
         .domain([0, 24])
         .range([height, 0]);
@@ -198,7 +200,7 @@ function renderScatterPlot(data, commits) {
         .attr('r', (d) => rScale(d.totalLines))
         .attr('fill', 'steelblue')
         .style('fill-opacity', 0.7)
-        
+      
         
         .on('mouseenter', (event, commit) => {
         renderTooltipContent(commit);
@@ -208,6 +210,7 @@ function renderScatterPlot(data, commits) {
         .on('mouseleave', () => {
             updateTooltipVisibility(false);
         });
+    createBrushSelector(svg);  
 }
     
 function renderTooltipContent(commit) {
@@ -242,6 +245,36 @@ function updateTooltipPosition(event) {
   const tooltip = document.getElementById('commit-tooltip');
   tooltip.style.left = `${event.clientX}px`;
   tooltip.style.top = `${event.clientY}px`;
+}
+
+function createBrushSelector(svg) {
+    svg.call(
+        d3.brush().on('start brush end', brushed)
+    );
+    // Raise dots and everything after overlay
+    svg.selectAll('.dots, .overlay ~ *').raise();
+}
+
+function isCommitSelected(selection, commit) {
+    if (!selection) {
+        return false;
+    }
+
+    const [[x0, y0], [x1, y1]] = selection;
+
+    const x = xScale(commit.datetime);
+    const y = yScale(commit.hourFrac);
+
+    return x >= x0 && x <= x1 && y >= y0 && y <= y1;
+}
+
+function brushed(event) {
+    const selection = event.selection;
+
+    d3.selectAll('circle').classed(
+        'selected',
+        (d) => isCommitSelected(selection, d),
+    );
 }
 
 let data = await loadData();
