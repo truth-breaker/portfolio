@@ -77,9 +77,10 @@ margin-top: 4em;
 }
 
 .projects article{
-  display: grid;
-  grid-template-rows: subgrid;
-  grid-row: span 3;
+    display: grid;
+    grid-template-rows: auto auto 1fr;
+    gap: 1em;
+    align-content: start;
 
 }
 .projects article h2{
@@ -315,4 +316,11 @@ circle.selected {
     font-size: 1.25em;
     line-height: 1.3;
     text-align: center;
+}
+.projects article img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    display: block;
+
 }
