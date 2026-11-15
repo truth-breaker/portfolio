@@ -2,21 +2,21 @@
     {
     "title": "BikeFlow",
     "year": "2026",
-    "image": "/images/bikeflow.png",
+    "image": "portfolio/images/dreamcar.png",
     "description": "An interactive visualization of bike traffic, stations, and traffic flow in the Boston Area.",
     "url": "https://truth-breaker.github.io/BikeFlow/"
     },
     {
         "title": "Dream Car Program",
         "year": "2021",
-        "image": "/images/dreamcar.png",
+        "image": "portfolio/images/dreamcar.png",
         "description": "An interactive C++ program where users can explore a collection of cars, compare models, and filter options by price and horsepower to help find their dream car. The program uses searching, sorting, filtering, and structured data to make exploring car options simple and interactive.",
         "url": "https://github.com/truth-breaker/Dream-Car-Program-CS-111-Final-Project-"
     },
     {
         "title": "Chronic Kidney Disease Prediction with KNN",
         "year": "2025",
-        "image": "/images/ckd-knn.png",
+        "image": "portfolio/images/dreamcar.png",
         "description": "A machine learning project using K-Nearest Neighbors (KNN) to classify Chronic Kidney Disease based on patient clinical and blood test data.",
         "url":"https://github.com/truth-breaker/DATA-SCIENCE/blob/main/CKD_Prediction_with_K_Nearest_Neighbors.ipynb"
 
