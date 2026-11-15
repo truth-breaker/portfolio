@@ -126,11 +126,20 @@ export async function fetchGithubData(username) {
 
 export function renderProjects(project, containerElement, headingLevel = "h2") {
   containerElement.innerHTML = "";
-  //goes thru every project (array-projects.json)
+
+  // Goes through every project in projects.json
   for (let projects of project) {
-    //create an <article>
+
+    // Makes image paths work locally and on GitHub Pages
+    const imagePath =
+      BASE_PATH === "/"
+        ? projects.image
+        : BASE_PATH + projects.image.replace(/^\//, "");
+
+    // Create an <article>
     const article = document.createElement("article");
-    //adding title image and description to the article
+
+    // Add title, image, description, and year
     article.innerHTML = `
       <${headingLevel}>
         ${
@@ -139,13 +148,16 @@ export function renderProjects(project, containerElement, headingLevel = "h2") {
             : projects.title
         }
       </${headingLevel}>
-        <img src="${projects.image}" alt="${projects.title}">
-        <div>
+
+      <img src="${imagePath}" alt="${projects.title}">
+
+      <div>
         <p>${projects.description}</p>
         <p class="project-year">c. ${projects.year}</p>
-        </div>
-      `;
-    //add the completed article to the projects container
+      </div>
+    `;
+
+    // Add completed article to the projects container
     containerElement.appendChild(article);
   }
 }
