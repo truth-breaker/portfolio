@@ -337,7 +337,9 @@ function renderLanguageBreakdown(selection) {
 
 let data = await loadData();
 let commits = processCommits(data);
+// Will get updated as user changes slider
 let filteredCommits = commits;
+updateFileDisplay(filteredCommits);
 renderCommitInfo(data,commits);
 renderScatterPlot(data, commits);
 
@@ -374,6 +376,8 @@ function onTimeSliderChange() {
     (d) => d.datetime <= commitMaxTime,
   );
   updateScatterPlot(data, filteredCommits);
+  updateFileDisplay(filteredCommits);
+
 }
 commitProgressSlider.addEventListener(
   'input',
@@ -461,4 +465,55 @@ function updateScatterPlot(data, commits) {
 
       updateTooltipVisibility(false);
     });
+}
+
+
+function updateFileDisplay(filteredCommits) {
+  let lines = filteredCommits.flatMap((d) => d.lines);
+
+  let files = d3
+    .groups(lines, (d) => d.file)
+    .map(([name, lines]) => {
+      return { name, lines };
+    })
+    .sort((a, b) => b.lines.length - a.lines.length);
+
+  let colors = d3.scaleOrdinal(d3.schemeDark2);
+
+  let filesContainer = d3
+    .select('#files')
+    .selectAll('div')
+    .data(files, (d) => d.name)
+    .join(
+      (enter) =>
+        enter.append('div').call((div) => {
+          // Filename + line count go together
+          div.append('dt').call((dt) => {
+            dt.append('code');
+            dt.append('small');
+          });
+
+          // dd only holds the visualization dots
+          div.append('dd');
+        }),
+    );
+
+  // Update filename
+  filesContainer
+    .select('dt > code')
+    .text((d) => d.name);
+
+  // Update line count
+  filesContainer
+    .select('dt > small')
+    .text((d) => `${d.lines.length} lines`);
+
+  // One dot for each line
+  filesContainer
+    .select('dd')
+    .selectAll('div')
+    .data((d) => d.lines)
+    .join('div')
+    .attr('class', 'loc')
+    .attr('style', (d) => `--color: ${colors(d.type)}`);
 }
