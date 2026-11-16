@@ -1,4 +1,5 @@
 import * as d3 from 'https://cdn.jsdelivr.net/npm/d3@7.9.0/+esm';
+import scrollama from 'https://cdn.jsdelivr.net/npm/scrollama@3.2.0/+esm';
 async function loadData() {
   const data = await d3.csv('loc.csv', (row) => ({
     ...row,
@@ -42,7 +43,9 @@ function processCommits(data) {
       });
 
       return ret;
-    });
+    })
+    .sort((a, b) => a.datetime - b.datetime);
+
 }
 
 function renderCommitInfo(data, commits) {
@@ -110,6 +113,7 @@ function renderCommitInfo(data, commits) {
 }
 let xScale;
 let yScale;
+let currentBrushSelection = null;
 function renderScatterPlot(data, commits) {
     const width = 1000;
     const height = 600;
@@ -200,7 +204,7 @@ function renderScatterPlot(data, commits) {
         .attr('cx', (d) => xScale(d.datetime))
         .attr('cy', (d) => yScale(d.hourFrac))
         .attr('r', (d) => rScale(d.totalLines))
-        .attr('fill', 'steelblue')
+        .attr('fill', '#8e6bb8')
         .style('fill-opacity', 0.7)
       
         
@@ -271,14 +275,9 @@ function isCommitSelected(selection, commit) {
 }
 
 function brushed(event) {
-    const selection = event.selection;
+    currentBrushSelection = event.selection;
 
-    d3.selectAll('circle').classed(
-        'selected',
-        (d) => isCommitSelected(selection, d),
-    );
-    renderSelectionCount(selection);
-    renderLanguageBreakdown(selection);
+    updateBrushSelection();
 }
 
 function renderSelectionCount(selection) {
@@ -343,47 +342,18 @@ updateFileDisplay(filteredCommits);
 renderCommitInfo(data,commits);
 renderScatterPlot(data, commits);
 
-let commitProgress = 100;
 
-let timeScale = d3
-  .scaleTime()
-  .domain([
-    d3.min(commits, (d) => d.datetime),
-    d3.max(commits, (d) => d.datetime),
-  ])
-  .range([0, 100]);
 
-let commitMaxTime = timeScale.invert(commitProgress);
-
-let commitProgressSlider =
-  document.querySelector('#commit-progress');
-
-let commitTime =
-  document.querySelector('#commit-time');
-  
-function onTimeSliderChange() {
-  commitProgress = Number(commitProgressSlider.value);
-
-  commitMaxTime = timeScale.invert(commitProgress);
-
-  commitTime.textContent =
-    commitMaxTime.toLocaleString('en-US', {
-      dateStyle: 'long',
-      timeStyle: 'short',
-    });
-
-  filteredCommits = commits.filter(
-    (d) => d.datetime <= commitMaxTime,
-  );
-  updateScatterPlot(data, filteredCommits);
-  updateFileDisplay(filteredCommits);
-
-}
-commitProgressSlider.addEventListener(
-  'input',
-  onTimeSliderChange,
+let commitMaxTime = d3.max(
+  commits,
+  (d) => d.datetime,
 );
-onTimeSliderChange();
+
+updateFileDisplay(filteredCommits);
+
+
+  
+
 
 
 function updateScatterPlot(data, commits) {
@@ -449,7 +419,7 @@ function updateScatterPlot(data, commits) {
     .attr('cx', (d) => xScale(d.datetime))
     .attr('cy', (d) => yScale(d.hourFrac))
     .attr('r', (d) => rScale(d.totalLines))
-    .attr('fill', 'steelblue')
+    .attr('fill', '#8e6bb8')
     .style('fill-opacity', 0.7)
     .on('mouseenter', (event, commit) => {
       d3.select(event.currentTarget)
@@ -465,6 +435,7 @@ function updateScatterPlot(data, commits) {
 
       updateTooltipVisibility(false);
     });
+    updateBrushSelection();
 }
 
 
@@ -516,4 +487,72 @@ function updateFileDisplay(filteredCommits) {
     .join('div')
     .attr('class', 'loc')
     .attr('style', (d) => `--color: ${colors(d.type)}`);
+}
+
+
+d3.select('#scatter-story')
+  .selectAll('.step')
+  .data(commits)
+  .join('div')
+  .attr('class', 'step')
+  .html(
+    (d, i) => `
+      On ${d.datetime.toLocaleString('en', {
+        dateStyle: 'full',
+        timeStyle: 'short',
+      })},
+
+      I made <a href="${d.url}" target="_blank">${
+        i > 0
+          ? 'another glorious commit'
+          : 'my first commit, and it was glorious'
+      }</a>.
+
+      I edited ${d.totalLines} lines across ${
+        d3.rollups(
+          d.lines,
+          (D) => D.length,
+          (d) => d.file,
+        ).length
+      } files.
+
+      Then I looked over all I had made, and I saw that it was very good.
+    `,
+  );
+
+function onStepEnter(response) {
+    const commit = response.element.__data__;
+
+  // Use this commit's datetime as the maximum time
+  commitMaxTime = commit.datetime;
+
+  // Filter commits up to this point
+  filteredCommits = commits.filter(
+    (d) => d.datetime <= commitMaxTime,
+  );
+
+  // Update the scatterplot
+  updateScatterPlot(data, filteredCommits);
+}
+
+const scroller = scrollama();
+
+scroller
+  .setup({
+    container: '#scrolly-1',
+    step: '#scrolly-1 .step',
+  })
+  .onStepEnter(onStepEnter);
+
+
+  function updateBrushSelection() {
+  const selection = currentBrushSelection;
+
+  d3.selectAll('circle').classed(
+    'selected',
+    (d) => isCommitSelected(selection, d),
+  );
+
+  renderSelectionCount(selection);
+  renderLanguageBreakdown(selection);
 }

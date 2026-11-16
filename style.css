@@ -2,7 +2,7 @@ html {
   color-scheme: light dark ;
 }
 :root{
---color-accent:oklch(27.438% 0.13866 310.226);
+--color-accent:oklch(38.085% 0.06329 314.379);
 accent-color: var(--color-accent);
 }
 body {
@@ -328,17 +328,7 @@ circle.selected {
 
 }
 
-#commit-progress {
-  flex: 1;
-}
-label:has(#commit-progress) {
-  display: flex;
-  align-items: baseline;
-  gap: 1em;
-}
-#commit-time {
-  margin-left: auto;
-}
+
 
 
 
@@ -385,3 +375,32 @@ label:has(#commit-progress) {
   background: var(--color);
   border-radius: 50%;
 }
+
+#scrolly-1 {
+    position: relative;
+
+    display: flex;
+
+    gap: 1rem;
+
+    > * {
+        flex: 1;
+    }
+}
+
+#scatter-story {
+    position: relative;
+}
+
+#scatter-plot {
+    position: sticky;
+
+    top: 0;
+
+    left: 0;
+
+    bottom: auto;
+
+    height: 50vh;
+}
+
